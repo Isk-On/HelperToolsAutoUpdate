@@ -1,27 +1,26 @@
 local dlstatus = require('moonloader').download_status
-local update_state = false -- Если переменная == true, значит начнётся обновление.
-local update_found = false -- Если будет true, будет доступна команда /update.
+local inicfg = require 'inicfg'
 
-local script_vers = 2.0
-local script_vers_text = "v1.0" -- Название нашей версии. В будущем будем её выводить ползователю.
 
-local update_url = ''           -- Путь к ini файлу. Позже нам понадобиться.
-local update_path = getWorkingDirectory() .. "/update.ini"
+update_state = false -- Р•СЃР»Рё РїРµСЂРµРјРµРЅРЅР°СЏ == true, Р·РЅР°С‡РёС‚ РЅР°С‡РЅС‘С‚СЃСЏ РѕР±РЅРѕРІР»РµРЅРёРµ.
+update_found = false -- Р•СЃР»Рё Р±СѓРґРµС‚ true, Р±СѓРґРµС‚ РґРѕСЃС‚СѓРїРЅР° РєРѕРјР°РЅРґР° /update.
 
-local script_url = '' -- Путь скрипту.
+local script_vers = 1
+local script_vers_text = "v1.0" -- РќР°Р·РІР°РЅРёРµ РЅР°С€РµР№ РІРµСЂСЃРёРё. Р’ Р±СѓРґСѓС‰РµРј Р±СѓРґРµРј РµС‘ РІС‹РІРѕРґРёС‚СЊ РїРѕР»Р·РѕРІР°С‚РµР»СЋ.
+
+local update_url = 'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/updateIni.ini' -- РџСѓС‚СЊ Рє ini С„Р°Р№Р»Сѓ. РџРѕР·Р¶Рµ РЅР°Рј РїРѕРЅР°РґРѕР±РёС‚СЊСЃСЏ.
+local update_path = getWorkingDirectory() .. "/updateIni.ini"
+
+local script_url = 'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/autoupdate.lua' -- РџСѓС‚СЊ СЃРєСЂРёРїС‚Сѓ.
 local script_path = thisScript().path
 
-
-
-function check_update() -- Создаём функцию которая будет проверять наличие обновлений при запуске скрипта.
+function check_update() -- РЎРѕР·РґР°С‘Рј С„СѓРЅРєС†РёСЋ РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ РїСЂРѕРІРµСЂСЏС‚СЊ РЅР°Р»РёС‡РёРµ РѕР±РЅРѕРІР»РµРЅРёР№ РїСЂРё Р·Р°РїСѓСЃРєРµ СЃРєСЂРёРїС‚Р°.
     downloadUrlToFile(update_url, update_path, function(id, status)
         if status == dlstatus.STATUS_ENDDOWNLOADDATA then
             updateIni = inicfg.load(nil, update_path)
-            if tonumber(updateIni.info.vers) > script_vers then -- Сверяем версию в скрипте и в ini файле на github
-                sampAddChatMessage(
-                    "{FFFFFF}Имеется {32CD32}новая {FFFFFF}версия скрипта. Версия: {32CD32}" ..
-                    updateIni.info.vers_text .. ". {FFFFFF}/update что-бы обновить", 0xFF0000) -- Сообщаем о новой версии.
-                update_found = true -- если обновление найдено, ставим переменной значение true
+            if tonumber(updateIni.info.vers) > script_vers then -- РЎРІРµСЂСЏРµРј РІРµСЂСЃРёСЋ РІ СЃРєСЂРёРїС‚Рµ Рё РІ ini С„Р°Р№Р»Рµ РЅР° github
+                sampAddChatMessage("{FFFFFF}РРјРµРµС‚СЃСЏ {32CD32}РЅРѕРІР°СЏ {FFFFFF}РІРµСЂСЃРёСЏ СЃРєСЂРёРїС‚Р°. Р’РµСЂСЃРёСЏ: {32CD32}"..updateIni.info.vers..". {FFFFFF}/update С‡С‚Рѕ-Р±С‹ РѕР±РЅРѕРІРёС‚СЊ", 0xFF0000) -- РЎРѕРѕР±С‰Р°РµРј Рѕ РЅРѕРІРѕР№ РІРµСЂСЃРёРё.
+                update_found = true -- РµСЃР»Рё РѕР±РЅРѕРІР»РµРЅРёРµ РЅР°Р№РґРµРЅРѕ, СЃС‚Р°РІРёРј РїРµСЂРµРјРµРЅРЅРѕР№ Р·РЅР°С‡РµРЅРёРµ true
             end
             os.remove(update_path)
         end
@@ -29,32 +28,34 @@ function check_update() -- Создаём функцию которая будет проверять наличие обнов
 end
 
 function main()
+    if not isSampLoaded() or not isSampfuncsLoaded() then return end
     while not isSampAvailable() do wait(100) end
 
     check_update()
 
-    sampRegisterChatCommand('test', function()
-        sampAddChatMessage("в этом обновлении добавили команду /test, ваааацууууууу", -1) 
+    sampRegisterChatCommand("bosit", function ()
+        sampAddChatMessage("РЅРѕРІР°СЏ РІРµСЃРёСЏ", -1)
     end)
 
-    if update_found then                             -- Если найдено обновление, регистрируем команду /update.
-        sampRegisterChatCommand('update', function() 
-            update_state = true                      
+    if update_found then -- Р•СЃР»Рё РЅР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ, СЂРµРіРёСЃС‚СЂРёСЂСѓРµРј РєРѕРјР°РЅРґСѓ /update.
+        sampRegisterChatCommand('update', function()  -- Р•СЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅР°РїРёС€РµС‚ РєРѕРјР°РЅРґСѓ, РЅР°С‡РЅС‘С‚СЃСЏ РѕР±РЅРѕРІР»РµРЅРёРµ.
+            update_state = true -- Р•СЃР»Рё С‡РµР»РѕРІРµРє РїСЂРѕРїРёС€РµС‚ /update, СЃРєСЂРёРїС‚ РѕР±РЅРѕРІРёС‚СЃСЏ.
         end)
     else
-        sampAddChatMessage('{FFFFFF}Нету доступных обновлений!')
+        sampAddChatMessage('{FFFFFF}РќРµС‚Сѓ РґРѕСЃС‚СѓРїРЅС‹С… РѕР±РЅРѕРІР»РµРЅРёР№!')
     end
 
     while true do
         wait(0)
-
-        if update_state then -- Если человек напишет /update и обновлени есть, начнётся скаачивание скрипта.
+  
+        if update_state then -- Р•СЃР»Рё С‡РµР»РѕРІРµРє РЅР°РїРёС€РµС‚ /update Рё РѕР±РЅРѕРІР»РµРЅРё РµСЃС‚СЊ, РЅР°С‡РЅС‘С‚СЃСЏ СЃРєР°Р°С‡РёРІР°РЅРёРµ СЃРєСЂРёРїС‚Р°.
             downloadUrlToFile(script_url, script_path, function(id, status)
                 if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-                    sampAddChatMessage("{FFFFFF}Скрипт {32CD32}успешно {FFFFFF}обновлён.", 0xFF0000)
+                    sampAddChatMessage("{FFFFFF}РЎРєСЂРёРїС‚ {32CD32}СѓСЃРїРµС€РЅРѕ {FFFFFF}РѕР±РЅРѕРІР»С‘РЅ.", 0xFF0000)
                 end
             end)
             break
         end
-    end
+  
+    end 
 end
