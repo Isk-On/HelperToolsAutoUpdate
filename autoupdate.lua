@@ -2,18 +2,18 @@ local dlstatus = require('moonloader').download_status
 local inicfg = require 'inicfg'
 
 
-update_state = false -- Если переменная == true, значит начнётся обновление.
+update_state = false -- Г…Г±Г«ГЁ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г Гї == true, Г§Г­Г Г·ГЁГІ Г­Г Г·Г­ВёГІГ±Гї Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ.
 
 local updating_true = false
-local script_vers = 1
+local script_vers = 2
 local script_vers_text =
-"v1.0" -- Название нашей версии. В будущем будем её выводить ползователю.
+"v1.0" -- ГЌГ Г§ГўГ Г­ГЁГҐ Г­Г ГёГҐГ© ГўГҐГ°Г±ГЁГЁ. Г‚ ГЎГіГ¤ГіГ№ГҐГ¬ ГЎГіГ¤ГҐГ¬ ГҐВё ГўГ»ГўГ®Г¤ГЁГІГј ГЇГ®Г«Г§Г®ГўГ ГІГҐГ«Гѕ.
 
 local update_url =
-'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/updateIni.ini' -- Путь к ini файлу. Позже нам понадобиться.
+'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/updateIni.ini' -- ГЏГіГІГј ГЄ ini ГґГ Г©Г«Гі. ГЏГ®Г§Г¦ГҐ Г­Г Г¬ ГЇГ®Г­Г Г¤Г®ГЎГЁГІГјГ±Гї.
 local update_path = getWorkingDirectory() .. "/updateIni.ini"
 
-local script_url = 'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/autoupdate.lua' -- Путь скрипту.
+local script_url = 'https://raw.githubusercontent.com/Isk-On/TestingAutoUpdate/main/autoupdate.lua' -- ГЏГіГІГј Г±ГЄГ°ГЁГЇГІГі.
 local script_path = thisScript().path
 
 
@@ -26,8 +26,8 @@ function main()
             updateIni = inicfg.load(nil, update_path)
             if tonumber(updateIni.info.vers) > script_vers then
                 sampAddChatMessage(
-                    "{FFFFFF}Имеется {32CD32}новая {FFFFFF}версия скрипта. Версия: {32CD32}" ..
-                    updateIni.info.vers .. ". {FFFFFF}/update что-бы обновить", 0xFF0000) -- Сообщаем о новой версии.
+                    "{FFFFFF}Г€Г¬ГҐГҐГІГ±Гї {32CD32}Г­Г®ГўГ Гї {FFFFFF}ГўГҐГ°Г±ГЁГї Г±ГЄГ°ГЁГЇГІГ . Г‚ГҐГ°Г±ГЁГї: {32CD32}" ..
+                    updateIni.info.vers .. ". {FFFFFF}/update Г·ГІГ®-ГЎГ» Г®ГЎГ­Г®ГўГЁГІГј", 0xFF0000) -- Г‘Г®Г®ГЎГ№Г ГҐГ¬ Г® Г­Г®ГўГ®Г© ГўГҐГ°Г±ГЁГЁ.
                 update_state = true
             end
             os.remove(update_path)
@@ -52,7 +52,7 @@ lua_thread.create(function()
         if update_state and updating_true then
             downloadUrlToFile(script_url, script_path, function(id, status)
                 if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-                    sampAddChatMessage("{FFFFFF}Скрипт {32CD32}успешно {FFFFFF}обновлён.", 0xFF0000)
+                    sampAddChatMessage("{FFFFFF}Г‘ГЄГ°ГЁГЇГІ {32CD32}ГіГ±ГЇГҐГёГ­Г® {FFFFFF}Г®ГЎГ­Г®ГўГ«ВёГ­.", 0xFF0000)
                     thisScript():reload()
                 end
             end)
